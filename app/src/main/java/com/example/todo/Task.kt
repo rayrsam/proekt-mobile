@@ -1,5 +1,8 @@
 package com.example.todo
+import kotlinx.serialization.Serializable
 
-class Task(val id:Int,
+@Serializable
+data class Task(val id:Int,
            var text:String = "Пустая заметка",
-           var status: Int = 1){}
+           var tag:String = "",
+           var status: Int = 1)

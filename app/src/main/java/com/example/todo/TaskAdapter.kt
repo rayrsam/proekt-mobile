@@ -10,7 +10,8 @@ import com.example.todo.databinding.TaskBinding
 
 interface TaskActionsListener{
     fun onDelete(task: Task)
-    fun onEdit(task: Task)
+    fun onEditText(task: Task)
+    fun onEditTag(task: Task)
     fun onDone(task: Task)
 }
 
@@ -40,7 +41,8 @@ class TaskAdapter(val action: TaskActionsListener) : RecyclerView.Adapter<Recycl
 
         (holder as TaskHolder).binding.apply {
             delBtn.setOnClickListener{ action.onDelete(task) }
-            edBtn.setOnClickListener{ action.onEdit(task) }
+            edBtn.setOnClickListener{ action.onEditText(task) }
+            tagBtn.setOnClickListener{ action.onEditTag(task) }
             doneBtn.setOnClickListener{ action.onDone(task) }
             taskText.setText(task.text)
             taskText.focusable = View.NOT_FOCUSABLE
@@ -48,7 +50,6 @@ class TaskAdapter(val action: TaskActionsListener) : RecyclerView.Adapter<Recycl
                 1 -> colorBase
                 else -> colorDone
             }
-            pos.text = position.toString()
         }
     }
 

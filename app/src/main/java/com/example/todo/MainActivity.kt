@@ -10,6 +10,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.todo.databinding.MainActivityBinding
 import com.example.todo.databinding.TaskBinding
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class MainActivity : ComponentActivity() {
     private lateinit var binding: MainActivityBinding
@@ -32,8 +34,12 @@ class MainActivity : ComponentActivity() {
                 taskList.deleteTask(task)
             }
 
-            override fun onEdit(task: Task) {
-                editTask(task)
+            override fun onEditText(task: Task) {
+                editTaskText(task)
+            }
+
+            override fun onEditTag(task: Task) {
+                editTaskTag(task)
             }
 
             override fun onDone(task: Task) {
@@ -57,14 +63,13 @@ class MainActivity : ComponentActivity() {
         taskList.addTask()
     }
 
-    private fun editTask(task: Task){
+    private fun editTaskText(task: Task){
         val taskBinding = TaskBinding.inflate(layoutInflater)
         taskBinding.buttons.visibility = View.GONE
-        taskBinding.pos.visibility = View.GONE
         taskBinding.taskText.setText(task.text)
 
         val dialog = AlertDialog.Builder(this)
-            .setTitle("")
+            .setTitle("Изменить ТЕКСТ")
             .setView(taskBinding.root)
             .setPositiveButton("OK") { _, _ ->
                 task.text = taskBinding.taskText.text.toString()
@@ -80,6 +85,21 @@ class MainActivity : ComponentActivity() {
         dialog.show()
     }
 
+    private fun editTaskTag(task: Task){
+        val taskBinding = TaskBinding.inflate(layoutInflater)
+        taskBinding.buttons.visibility = View.GONE
+        taskBinding.taskText.setText(task.tag)
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Изменить ТЕГИ")
+            .setView(taskBinding.root)
+            .setPositiveButton("OK") { _, _ ->
+                task.tag = taskBinding.taskText.text.toString()
+            }
+            .setNegativeButton("Отмена") { _, _ -> run {} }
+            .create()
+        dialog.show()
+    }
 
 
     private val loadLauncher =
@@ -108,7 +128,8 @@ class MainActivity : ComponentActivity() {
 
     private fun saveFile(uri: Uri) {
         contentResolver.openOutputStream(uri)?.use {
-            val bytes = taskList.writeToFile().toByteArray()
+            val jsonResult = Json
+            val bytes = jsonResult.encodeToString(taskList.getTasks()).toByteArray()
             it.write(bytes)
         } ?: throw IllegalStateException()
     }

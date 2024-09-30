@@ -1,5 +1,8 @@
 package com.example.todo
 
+import kotlinx.serialization.json.Json
+
+
 typealias TaskListener = (blocks: List<Task>) -> Unit
 
 class TaskList {
@@ -10,7 +13,7 @@ class TaskList {
     fun getTasks() : MutableList<Task>{ return taskList }
 
     fun addTask(){
-        val newTask = Task(index, "Пустая Заметка", 1)
+        val newTask = Task(index, "Пустая Заметка", "", 1)
         taskList.add(newTask)
         index++
         notifyChanges()
@@ -34,22 +37,10 @@ class TaskList {
         taskList.clear()
         index = 0
 
-        val newTasks = data.split("\n")
-
-        newTasks.forEach {
-            val params = it.split(";")
-            val task = Task(index++, params[0], params[1].toInt())
-            taskList.add(task)
-        }
+        taskList = Json.decodeFromString<MutableList<Task>>(data)
 
         notifyChanges()
     }
 
-    fun writeToFile(): String{
-        var result = ""
-        taskList.forEach {
-            result += "${it.text};${it.status}\n"
-        }
-        return result
-    }
+
 }

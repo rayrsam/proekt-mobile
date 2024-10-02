@@ -6,21 +6,29 @@ import kotlinx.serialization.json.Json
 typealias TaskListener = (blocks: List<Task>) -> Unit
 
 class TaskList {
-    private var taskList = mutableListOf<Task>()
+    var tasks = mutableListOf<Task>()
     lateinit var listener: TaskListener
     private var index = 0
 
-    fun getTasks() : MutableList<Task>{ return taskList }
-
-    fun addTask(){
-        val newTask = Task(index, "Пустая Заметка", "", 1)
-        taskList.add(newTask)
+    fun addTask(text : String) : Task{
+        val newTask = Task(
+            index.toString(),
+            text,
+            mutableListOf<String>(),
+            1)
+        tasks.add(newTask)
         index++
+        notifyChanges()
+        return newTask
+    }
+
+    fun addTask(task: Task){
+        tasks.add(task)
         notifyChanges()
     }
 
     fun deleteTask(task: Task){
-        taskList.remove(task)
+        tasks.remove(task)
         notifyChanges()
     }
 
@@ -29,17 +37,13 @@ class TaskList {
         notifyChanges()
     }
 
-    private fun notifyChanges(){
-        listener.invoke(taskList)
+    fun setNewDataSet(data: List<Task>){
+        tasks = data.toMutableList()
+        notifyChanges()
     }
 
-    fun readFromFile(data: String){
-        taskList.clear()
-        index = 0
-
-        taskList = Json.decodeFromString<MutableList<Task>>(data)
-
-        notifyChanges()
+    private fun notifyChanges(){
+        listener.invoke(tasks)
     }
 
 

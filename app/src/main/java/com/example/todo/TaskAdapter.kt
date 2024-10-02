@@ -46,15 +46,15 @@ class TaskAdapter(val action: TaskActionsListener) : RecyclerView.Adapter<Recycl
             doneBtn.setOnClickListener{ action.onDone(task) }
             taskText.setText(task.text)
             taskText.focusable = View.NOT_FOCUSABLE
-            taskText.background = when (task.status){
-                1 -> colorBase
-                else -> colorDone
+            taskText.backgroundTintList = when (task.status){
+                -1 -> android.content.res.ColorStateList.valueOf(colorDone)
+                else -> android.content.res.ColorStateList.valueOf(colorBase)
             }
         }
     }
 
     companion object{
-        val colorBase = Color.argb(255, 255, 235,59).toDrawable()
-        val colorDone = Color.argb(255, 136, 136, 136).toDrawable()
+        val colorBase = Color.argb(255, 255, 235,59)
+        val colorDone = Color.argb(255, 136, 136, 136)
     }
 }
